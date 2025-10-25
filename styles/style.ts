@@ -1,0 +1,115 @@
+import { StyleSheet } from 'react-native';
+export const Splashstyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0B1F3A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  logoWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  logoCircle: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
+  },
+  logo: {
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+  },
+  logoLetter: {
+    fontSize: 42,
+    fontWeight: '700',
+    color: '#0B1F3A',
+  },
+  appName: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+  },
+  tagline: {
+    marginTop: 6,
+    fontSize: 14,
+    color: '#C6D0E0',
+    textAlign: 'center',
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 36,
+  },
+  footerText: {
+    color: '#8FA3BF',
+    fontSize: 12,
+  },
+  // Form & input styles
+  formWrap: {
+    width: '100%',
+    paddingHorizontal: 24,
+    marginTop: 20,
+    gap: 12,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 48,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  leftIcon: {
+    marginRight: 8,
+    color: '#0B1F3A',
+  },
+  textInput: {
+    flex: 1,
+    color: '#0B1F3A',
+    fontSize: 16,
+  },
+  eyeButton: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+  },
+  eyeIcon: {
+    color: '#0B1F3A',
+  },
+  // Primary button styles
+  primaryButton: {
+    marginTop: 8,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#1A3B6B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+});
