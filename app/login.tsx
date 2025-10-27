@@ -89,6 +89,9 @@ export default function Login() {
               const passwordInvalid = password.trim().length === 0;
               setEmailError(emailInvalid);
               setPasswordError(passwordInvalid);
+              if (!emailInvalid && !passwordInvalid) {
+                router.replace('/admin-home');
+              }
             }}
             accessibilityRole="button"
           >
@@ -113,7 +116,9 @@ export default function Login() {
         <View style={{ width: '100%', paddingHorizontal: 24 }}>
           <Pressable
             style={Splashstyles.socialButton}
-            onPress={() => { /* TODO: wire Google auth */ }}
+            onPress={() => { 
+              router.push('/admin-home')
+             }}
             accessibilityRole="button"
           >
             <Ionicons name="logo-google" size={20} style={Splashstyles.socialIcon} />
