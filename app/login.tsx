@@ -1,9 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import loginimg from '../assets/login_img.jpg';
 import logo from '../assets/logo.png';
 import { Splashstyles } from '../styles/style';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -18,7 +21,9 @@ export default function Login() {
     <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
      
       <View style={{ flex: 1, backgroundColor: '#0B1F3A', position: 'relative' }}>
-        <View style={Splashstyles.topHalfBackground} />
+        <View style={Splashstyles.topHalfBackgroundContainer}>
+          <Image source={loginimg} style={Splashstyles.topHalfBackground} resizeMode="cover" />
+        </View>
         <View style={[Splashstyles.container, { backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }]}>
           <View style={Splashstyles.logoWrap}>
             <View style={Splashstyles.logoCircle}>
@@ -76,8 +81,7 @@ export default function Login() {
                 />
               </Pressable>
             </View>
-          </View>
-        <View style={{ width: '100%', paddingHorizontal: 24 }}>
+            <View style={{ width: '100%', paddingHorizontal: 24 }}>
           <Pressable
             style={Splashstyles.primaryButton}
             onPress={() => {
@@ -95,7 +99,7 @@ export default function Login() {
           </Pressable>
           <Pressable
             style={Splashstyles.secondaryButton}
-            onPress={() => { /* TODO: navigate to sign up */ }}
+            onPress={() => router.push('/signup')}
             accessibilityRole="button"
           >
             <Text style={Splashstyles.secondaryButtonText}>Sign up</Text>
@@ -116,6 +120,8 @@ export default function Login() {
             <Text style={Splashstyles.socialButtonText}>Continue with Google</Text>
           </Pressable>
         </View>
+          </View>
+       
         </View>
       </View>
     </SafeAreaView>

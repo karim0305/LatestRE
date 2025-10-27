@@ -1,4 +1,5 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 export const Splashstyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -9,16 +10,22 @@ export const Splashstyles = StyleSheet.create({
 
   
   },
-  topHalfBackground: {
+  topHalfBackgroundContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 250,
+    width: '100%',
+    height: SCREEN_HEIGHT * 0.3,
     backgroundColor: '#FFFFFF',
     zIndex: 0,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 100,
+    overflow: 'hidden',
+  },
+  topHalfBackground: {
+    width: '100%',
+    height: '100%',
   },
   logoWrap: {
     alignItems: 'center',
@@ -75,6 +82,16 @@ export const Splashstyles = StyleSheet.create({
     paddingHorizontal: 24,
     marginTop: 20,
     gap: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#1A3B6B',
+    paddingVertical: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -115,6 +132,9 @@ export const Splashstyles = StyleSheet.create({
     color: '#0B1F3A',
   },
   // Primary button styles
+
+
+
   primaryButton: {
     marginTop: 8,
     height: 50,
@@ -196,7 +216,39 @@ export const Splashstyles = StyleSheet.create({
   },
   socialButtonText: {
     color: '#0B1F3A',
-    fontSize: 16,
-    fontWeight: '700',
   },
+});
+
+// Sighnup styles 
+export const Sighnupstyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0B1F3A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+
+  
+  },
+SighnuptopHalfBackground: {
+ position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: SCREEN_HEIGHT * 0.2,
+    backgroundColor: '#FFFFFF',
+    zIndex: 0,
+    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 100,
+    overflow: 'hidden',
+},
+RegLabel: {
+marginTop: 60,
+textAlign: 'center',
+fontSize: 32,
+fontWeight: '800',
+color: '#FFFFFF',
+letterSpacing: 0.5,
+},
 });
