@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, View } from 'react-native'
 
-export const home = () => {
+export default function Home() {
   return (
     <View>
         <Text>Admin Home</Text>

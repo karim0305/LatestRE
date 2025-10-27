@@ -9,65 +9,115 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   return (
-    <SafeAreaView>
-      <View style={[Splashstyles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <View style={Splashstyles.logoWrap}>
-          <View style={Splashstyles.logoCircle}>
-            <Image source={logo} style={Splashstyles.logo} resizeMode="cover" />
+    <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+     
+      <View style={{ flex: 1, backgroundColor: '#0B1F3A', position: 'relative' }}>
+        <View style={Splashstyles.topHalfBackground} />
+        <View style={[Splashstyles.container, { backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }]}>
+          <View style={Splashstyles.logoWrap}>
+            <View style={Splashstyles.logoCircle}>
+              <Image source={logo} style={Splashstyles.logo} resizeMode="cover" />
+            </View>
           </View>
-        </View>
-        <Text style={Splashstyles.appName}>Login</Text>
-        <Text style={Splashstyles.tagline}>Welcome back! Please sign in.</Text>
-        <View style={Splashstyles.formWrap}>
-        <View style={Splashstyles.inputContainer}>
-          <Ionicons name="mail" size={20} style={Splashstyles.leftIcon} />
-          <TextInput
-            style={Splashstyles.textInput}
-            placeholder="Email"
-            placeholderTextColor="#8FA3BF"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-        <View style={Splashstyles.inputContainer}>
-          <Ionicons name="lock-closed" size={20} style={Splashstyles.leftIcon} />
-          <TextInput
-            style={Splashstyles.textInput}
-            placeholder="Password"
-            placeholderTextColor="#8FA3BF"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-          />
+          <Text style={Splashstyles.appName}>Login</Text>
+          <Text style={Splashstyles.tagline}>Welcome back! Please sign in.</Text>
+        
+          <View style={Splashstyles.formWrap}>
+            <View style={[
+              Splashstyles.inputContainer,
+              emailFocused && Splashstyles.inputFocused,
+              emailError && Splashstyles.inputError,
+            ]}>
+              <Ionicons name="mail" size={20} style={Splashstyles.leftIcon} />
+              <TextInput
+                style={Splashstyles.textInput}
+                placeholder="Email"
+                placeholderTextColor="#8FA3BF"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={email}
+                onChangeText={setEmail}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+              />
+            </View>
+            <View style={[
+              Splashstyles.inputContainer,
+              passwordFocused && Splashstyles.inputFocused,
+              passwordError && Splashstyles.inputError,
+            ]}>
+              <Ionicons name="lock-closed" size={20} style={Splashstyles.leftIcon} />
+              <TextInput
+                style={Splashstyles.textInput}
+                placeholder="Password"
+                placeholderTextColor="#8FA3BF"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
+              />
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setShowPassword((s) => !s)}
+                style={Splashstyles.eyeButton}
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off' : 'eye'}
+                  size={20}
+                  style={Splashstyles.eyeIcon}
+                />
+              </Pressable>
+            </View>
+          </View>
+        <View style={{ width: '100%', paddingHorizontal: 24 }}>
           <Pressable
+            style={Splashstyles.primaryButton}
+            onPress={() => {
+              const emailInvalid = email.trim().length === 0;
+              const passwordInvalid = password.trim().length === 0;
+              setEmailError(emailInvalid);
+              setPasswordError(passwordInvalid);
+            }}
             accessibilityRole="button"
-            onPress={() => setShowPassword((s) => !s)}
-            style={Splashstyles.eyeButton}
           >
-            <Ionicons
-              name={showPassword ? 'eye-off' : 'eye'}
-              size={20}
-              style={Splashstyles.eyeIcon}
-            />
+            <Text style={Splashstyles.primaryButtonText}>Login</Text>
+          </Pressable>
+          <Pressable style={Splashstyles.linkCenter} onPress={() => { /* TODO: navigate to reset */ }}>
+            <Text style={Splashstyles.linkText}>Forgot password?</Text>
+          </Pressable>
+          <Pressable
+            style={Splashstyles.secondaryButton}
+            onPress={() => { /* TODO: navigate to sign up */ }}
+            accessibilityRole="button"
+          >
+            <Text style={Splashstyles.secondaryButtonText}>Sign up</Text>
           </Pressable>
         </View>
+        <View style={Splashstyles.dividerRow}>
+          <View style={Splashstyles.dividerLine} />
+          <Text style={Splashstyles.dividerText}>or continue with</Text>
+          <View style={Splashstyles.dividerLine} />
+        </View>
+        <View style={{ width: '100%', paddingHorizontal: 24 }}>
+          <Pressable
+            style={Splashstyles.socialButton}
+            onPress={() => { /* TODO: wire Google auth */ }}
+            accessibilityRole="button"
+          >
+            <Ionicons name="logo-google" size={20} style={Splashstyles.socialIcon} />
+            <Text style={Splashstyles.socialButtonText}>Continue with Google</Text>
+          </Pressable>
+        </View>
+        </View>
       </View>
-    <View style={{ width: '100%', paddingHorizontal: 24 }}>
-      <Pressable
-        style={Splashstyles.primaryButton}
-        onPress={() => {}}
-        accessibilityRole="button"
-      >
-        <Text style={Splashstyles.primaryButtonText}>Login</Text>
-      </Pressable>
-    </View>
-      </View>
-  
     </SafeAreaView>
   );
 }

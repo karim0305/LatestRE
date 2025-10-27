@@ -6,6 +6,19 @@ export const Splashstyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
+
+  
+  },
+  topHalfBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 250,
+    backgroundColor: '#FFFFFF',
+    zIndex: 0,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   logoWrap: {
     alignItems: 'center',
@@ -68,6 +81,8 @@ export const Splashstyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#1A3B6B',
     paddingHorizontal: 12,
     height: 48,
     shadowColor: '#000',
@@ -75,6 +90,13 @@ export const Splashstyles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 2,
+  },
+  inputFocused: {
+    borderColor: '#274B82',
+    borderWidth: 2,
+  },
+  inputError: {
+    borderColor: '#D14343',
   },
   leftIcon: {
     marginRight: 8,
@@ -111,5 +133,70 @@ export const Splashstyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
+  },
+  linkRight: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
+  },
+  linkCenter: {
+    alignSelf: 'center',
+    marginTop: 8,
+  },
+  linkText: {
+    color: '#C6D0E0',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    marginTop: 12,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#1A3B6B',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    color: '#1A3B6B',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  dividerRow: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    paddingHorizontal: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#334766',
+  },
+  dividerText: {
+    color: '#C6D0E0',
+    fontSize: 12,
+    marginHorizontal: 8,
+  },
+  socialButton: {
+    marginTop: 12,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+  },
+  socialIcon: {
+    color: '#DB4437',
+    marginRight: 8,
+  },
+  socialButtonText: {
+    color: '#0B1F3A',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
