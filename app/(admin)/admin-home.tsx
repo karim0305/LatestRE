@@ -3,9 +3,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, Pressable, FlatList, Image } from 'react-native';
 import Logo from '../../assets/logo.png';
 import { Ionicons } from '@expo/vector-icons';
+import ViewUserModal from '../Models/ViewUserModal';
 
 export default function AdminHome() {
   const [tab, setTab] = useState<'Customer' | 'Agent' | 'Admin'>('Customer');
+  const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; phone: string; address: string } | null>(null);
+  const [sheetVisible, setSheetVisible] = useState(false);
 
   const customers = [
     { id: 'c1', name: 'Alice Johnson', phone: '+1 (555) 123-4567', address: '123 Maple St, Springfield' },
@@ -62,7 +65,7 @@ export default function AdminHome() {
                 <Text style={{ color: '#C6D0E0', marginTop: 2, fontSize: 12 }} numberOfLines={1}>{item.address}</Text>
               </View>
               <Pressable
-                onPress={() => { /* TODO: handle action */ }}
+                onPress={() => { setSelectedUser(item); setSheetVisible(true); }}
                 style={{ paddingVertical: 8, paddingHorizontal: 12, backgroundColor: '#1A3B6B', borderRadius: 8 }}
               >
                 <Text style={{ color: '#FFFFFF', fontWeight: '600' }}>View</Text>
@@ -70,7 +73,9 @@ export default function AdminHome() {
             </View>
           )}
         />
+
+        <ViewUserModal visible={sheetVisible} user={selectedUser} onClose={() => setSheetVisible(false)} />
       </View>
     </SafeAreaView>
   );
- }
+}
