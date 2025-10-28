@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import Logo from '../../assets/logo.png';
-import { Splashstyles } from '../../styles/style';
 
 export type UserSummary = {
   id: string;
@@ -25,7 +24,7 @@ type Props = {
   onEdit?: () => void;
 };
 
-export default function ViewUserModal({ visible, user, onClose, onEdit }: Props) {
+export default function ViewUserBottomSheet({ visible, user, onClose, onEdit }: Props) {
   const defaultUser: UserSummary = {
     id: 'demo',
     name: 'John Doe',
@@ -39,84 +38,197 @@ export default function ViewUserModal({ visible, user, onClose, onEdit }: Props)
     legalDocs: [],
     password: 'password123',
   };
+
   const u: UserSummary = user ?? defaultUser;
+
   return (
     <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' }}>
-        <View style={{ flex: 1, backgroundColor: '#0A274D' }}>
-          <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
-            <View style={{ alignItems: 'center', marginBottom: 16 }}>
-              <Pressable onPress={onClose} style={{ position: 'absolute', right: 0, top: 0, padding: 8 }}>
-                <Ionicons name="close" size={22} color="#FFFFFF" />
-              </Pressable>
-              {u.photoUri ? (
-                <Image source={{ uri: u.photoUri }} style={{ width: 96, height: 96, borderRadius: 48, marginBottom: 12 }} />
-              ) : (
-                <Image source={Logo} style={{ width: 96, height: 96, borderRadius: 48, marginBottom: 12 }} />
-              )}
-              <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: '800' }}>{u.name || '—'}</Text>
-              <Text style={{ color: '#C6D0E0', marginTop: 4 }}>{u.email || '—'}</Text>
-              <View style={{ marginTop: 8, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 9999, backgroundColor: '#1A3B6B' }}>
-                <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>{u.accountType || '—'}</Text>
-              </View>
-              <Pressable
-                onPress={() => { if (onEdit) onEdit(); }}
-                style={{ marginTop: 10, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999, backgroundColor: '#1A3B6B' }}
-                accessibilityRole="button"
+      {/* Overlay background */}
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          justifyContent: 'flex-end',
+        }}
+      >
+        {/* Bottom sheet container */}
+        <View
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            maxHeight: '85%',
+            shadowColor: '#000',
+            shadowOpacity: 0.2,
+            shadowOffset: { width: 0, height: -3 },
+            shadowRadius: 8,
+            elevation: 8,
+          }}
+        >
+          {/* Drag handle */}
+          <View style={{ alignItems: 'center', paddingVertical: 8 }}>
+            <Pressable onPress={onClose}>
+              <View
+                style={{
+                  width: 40,
+                  height: 5,
+                  backgroundColor: '#CBD5E1',
+                  borderRadius: 3,
+                }}
+              />
+            </Pressable>
+          </View>
+
+          {/* Scrollable content */}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 40 }}
+          >
+            {/* Profile header */}
+            <View style={{ alignItems: 'center', marginTop: 12 }}>
+              <Image
+                source={u.photoUri ? { uri: u.photoUri } : Logo}
+                style={{
+                  width: 96,
+                  height: 96,
+                  borderRadius: 48,
+                  marginBottom: 8,
+                  backgroundColor: '#E2E8F0',
+                }}
+              />
+
+              <Text
+                style={{
+                  color: '#0B1F3A',
+                  fontSize: 20,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                }}
               >
-                <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Edit</Text>
-              </Pressable>
+                {u.name || '—'}
+              </Text>
+
+              <Text
+                style={{
+                  color: '#64748B',
+                  fontSize: 14,
+                  marginTop: 4,
+                  textAlign: 'center',
+                }}
+              >
+                {u.phone || '03030030330'}
+              </Text>
+
+              <View
+                style={{
+                  marginTop: 10,
+                  paddingHorizontal: 12,
+                  paddingVertical: 4,
+                  borderRadius: 9999,
+                  backgroundColor: '#1A3B6B',
+                }}
+              >
+                <Text style={{ color: '#FFF', fontWeight: '600' }}>
+                  {u.accountType || 'Customer'}
+                </Text>
+              </View>
+
+             
             </View>
 
+            {/* Divider */}
+            <View
+              style={{
+                height: 1,
+                backgroundColor: '#E2E8F0',
+                marginVertical: 16,
+              }}
+            />
+
+            {/* Agent legal docs */}
             {u.accountType === 'Agent' && (
               <View style={{ marginBottom: 16 }}>
-                <Text style={{ color: '#8FA3BF', fontSize: 12, marginBottom: 8 }}>Legal documents</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12 }}>
+                <Text
+                  style={{
+                    color: '#64748B',
+                    fontSize: 14,
+                    fontWeight: '600',
+                    marginBottom: 8,
+                  }}
+                >
+                  Legal Documents
+                </Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 10 }}
+                >
                   {!u.legalDocs || u.legalDocs.length === 0 ? (
-                    <Text style={{ color: '#C6D0E0' }}>—</Text>
+                    <Text style={{ color: '#94A3B8' }}>No documents uploaded</Text>
                   ) : (
                     u.legalDocs.map((uri, idx) => (
-                      <Image key={`${uri}-${idx}`} source={{ uri }} style={{ width: 72, height: 72, borderRadius: 8 }} />
+                      <Image
+                        key={`${uri}-${idx}`}
+                        source={{ uri }}
+                        style={{
+                          width: 72,
+                          height: 72,
+                          borderRadius: 8,
+                          backgroundColor: '#E2E8F0',
+                        }}
+                      />
                     ))
                   )}
                 </ScrollView>
               </View>
             )}
 
-            <View style={{ gap: 12 }}>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="person-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.name || '—'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="call-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.phone || '—'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="card-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.cnic || '—'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="home-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.address || '—'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="male-female-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.gender || 'Male'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="briefcase-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.accountType || 'Agent'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.email || 'momin@gmail.com'}</Text>
-              </View>
-              <View style={Splashstyles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} style={Splashstyles.leftIcon} />
-                <Text style={Splashstyles.textInput}>{u.password ? '••••••••' : '********'}</Text>
-             
-              </View>
+            {/* User info */}
+            <View style={{ gap: 14 }}>
+              {[
+                { icon: 'person-outline', label: 'Full Name', value: u.name },
+              
+                { icon: 'card-outline', label: 'CNIC', value: u.cnic },
+                { icon: 'home-outline', label: 'Address', value: u.address },
+                { icon: 'male-female-outline', label: 'Gender', value: u.gender },
+                { icon: 'briefcase-outline', label: 'Account Type', value: u.accountType },
+                { icon: 'mail-outline', label: 'Email', value: u.email },
+                { icon: 'lock-closed-outline', label: 'Password', value: '••••••••' },
+              ].map((item, i) => (
+                <View
+                  key={i}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 10,
+                    borderBottomWidth: i < 7 ? 1 : 0,
+                    borderBottomColor: '#E2E8F0',
+                  }}
+                >
+                  <Ionicons
+                    name={item.icon as any}
+                    size={20}
+                    color="#1A3B6B"
+                    style={{ width: 28 }}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        color: '#64748B',
+                        fontSize: 16,
+                        marginBottom: 2,
+                      }}
+                    >
+                      {item.label}
+                    </Text>
+                    <Text style={{ color: '#0B1F3A', fontSize: 14 }}>
+                      {item.value || '—'}
+                    </Text>
+                  </View>
+                </View>
+              ))}
             </View>
           </ScrollView>
         </View>
