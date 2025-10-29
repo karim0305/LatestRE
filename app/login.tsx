@@ -84,15 +84,17 @@ export default function Login() {
             <View style={{ width: '100%', paddingHorizontal: 24 }}>
           <Pressable
             style={Splashstyles.primaryButton}
-            onPress={() => {
-              const emailInvalid = email.trim().length === 0;
-              const passwordInvalid = password.trim().length === 0;
-              setEmailError(emailInvalid);
-              setPasswordError(passwordInvalid);
-              if (!emailInvalid && !passwordInvalid) {
-                router.replace('/admin-home');
-              }
-            }}
+           onPress={() => {
+  const emailInvalid = email.trim().length === 0;
+  const passwordInvalid = password.trim().length === 0;
+  setEmailError(emailInvalid);
+  setPasswordError(passwordInvalid);
+  if (!emailInvalid && !passwordInvalid) {
+ // ✅ This will now show
+ alert("Saved successfully!");
+    router.replace('/admin-home');
+  }
+}}
             accessibilityRole="button"
           >
             <Text style={Splashstyles.primaryButtonText}>Login</Text>

@@ -1,6 +1,8 @@
-import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from 'expo-router';
+import React, { useLayoutEffect } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, ScrollView } from 'react-native';
 
 export default function AdminDashboard() {
   // Mock stats
@@ -14,7 +16,23 @@ export default function AdminDashboard() {
       remaining: 18,
     },
   };
+ const navigation = useNavigation();
 
+  // 👇 Set headerRight here
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: 'row', marginRight: 8 }}>
+          <Pressable
+            onPress={() => { /* TODO: open notifications */ }}
+            style={{ padding: 8, marginRight: 8, borderRadius: 8, backgroundColor: '#0A274D' }}
+          >
+            <Ionicons name="notifications-outline" size={20} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation]);
   // Simple monthly chart data (Jan-Dec)
   const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
   const sold =   [2, 3, 4, 3, 2, 5, 4, 3, 6, 7, 5, 7];

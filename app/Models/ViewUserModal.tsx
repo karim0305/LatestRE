@@ -17,7 +17,7 @@ export type UserSummary = {
   password?: string;
 };
 
-type Props = {
+export type Props = {
   visible: boolean;
   user: UserSummary | null;
   onClose: () => void;

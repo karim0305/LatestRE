@@ -251,7 +251,7 @@ export default function AddUserModal({ visible, onClose }: AddUserModalProps) {
               fontSize: 20,
               fontWeight: 'bold',
               color: '#1A3B6B',
-            }}>Add New User</Text>
+            }}>Edit User</Text>
             <Pressable onPress={onClose}>
               <Ionicons name="close" size={24} color="#666" />
             </Pressable>
@@ -670,7 +670,7 @@ export default function AddUserModal({ visible, onClose }: AddUserModalProps) {
                 backgroundColor: '#1A3B6B',
               }}
             >
-              <Text style={{ color: 'white', fontWeight: '600' }}>Add User</Text>
+              <Text style={{ color: 'white', fontWeight: '600' }}>Update User</Text>
             </Pressable>
           </View>
         </View>
