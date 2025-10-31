@@ -16,14 +16,7 @@ export default function AdminLayout() {
       <View style={{ height: 1, backgroundColor: '#E5E7EB' }} />
       <View style={{ paddingTop: 8 }}>
         <DrawerItemList {...props} />
-        <DrawerItem
-          label="Properties"
-          labelStyle={{ color: '#0B1F3A' }}
-          icon={({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          )}
-          onPress={() => { /* TODO: navigate to Properties */ }}
-        />
+        
         <DrawerItem
           label="Logout"
           labelStyle={{ color: '#B00020' }}
@@ -68,7 +61,6 @@ export default function AdminLayout() {
         name="index"
         options={{
           title: 'Dashboard',
-   
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
             <Ionicons name="speedometer-outline" size={size} color={color} />
           ),
@@ -80,6 +72,15 @@ export default function AdminLayout() {
     title: 'Admin Home',
     drawerIcon: ({ color, size }) => (
       <Ionicons name="person-circle-outline" size={size} color={color} />
+    ),
+  }}
+/>
+<Drawer.Screen
+  name="properties"
+  options={{
+    title: 'Properties',
+    drawerIcon: ({ color, size }: { color: string; size: number }) => (
+      <Ionicons name="home-outline" size={size} color={color} />
     ),
   }}
 />
