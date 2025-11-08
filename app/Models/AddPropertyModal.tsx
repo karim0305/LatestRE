@@ -1,19 +1,33 @@
 import { AddPropertystyles } from '@/styles/style';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import * as Location from 'expo-location';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
+  Button,
+  Dimensions,
   Image,
   Linking,
-  Modal,
-  Pressable,
+  Modal, Platform, Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   View
 } from 'react-native';
+import { Marker } from 'react-native-maps';
+import MapView from '../components/MapView';
 import { PropertyItem } from '../types/property';
+
+// Type for extended location with additional properties
+type ExtendedLocation = Location.LocationGeocodedLocation & {
+  city?: string;
+  country?: string;
+  region?: string;
+  administrativeArea?: string;
+};
 
 type AddPropertyModalProps = {
   visible: boolean;
@@ -21,11 +35,253 @@ type AddPropertyModalProps = {
   onAddProperty: (property: Omit<PropertyItem, '_id' | 'createdAt' | 'updatedAt'>) => void;
 };
 
+const { width, height } = Dimensions.get('window');
+
+const styles = StyleSheet.create({
+  mapContainer: {
+    height: 200,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  mapHint: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    padding: 5,
+    textAlign: 'center',
+    borderRadius: 5,
+    fontSize: 12,
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#666',
+  },
+  errorContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    padding: 20,
+  },
+  errorText: {
+    marginVertical: 10,
+    textAlign: 'center',
+    color: '#ff3b30',
+  },
+});
+
 export default function AddPropertyModal({ visible, onClose, onAddProperty }: AddPropertyModalProps) {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false); // Add this line
   const propertyTypes = ['sale', 'rent'];
   const propertyCategories = ['apartment', 'house', 'villa', 'office', 'land', 'commercial'];
+
+  const [location, setLocation] = useState({
+    latitude: 24.8607, // Default to Islamabad coordinates
+    longitude: 67.0011,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+
+  // Location state management
+  const [locationState, setLocationState] = useState<{
+    status: 'idle' | 'loading' | 'granted' | 'denied' | 'error';
+    error?: string;
+  }>({ status: 'idle' });
+
+  // Debounce function to limit the number of API calls
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    return function(this: any, ...args: any[]) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+        timeoutId = null;
+      }, delay);
+    };
+  };
+
+  // Function to search for an address
+  const searchAddress = useCallback(debounce(async (address: string) => {
+    if (!address.trim()) return;
+    
+    try {
+      const results = await Location.geocodeAsync(address);
+      if (results.length > 0) {
+        const { latitude, longitude } = results[0];
+        const newLocation = {
+          latitude,
+          longitude,
+          latitudeDelta: 0.005, // Zoom in closer for search results
+          longitudeDelta: 0.005,
+        };
+        
+        setLocation(newLocation);
+        
+        // Update form data with new location
+        setFormData(prev => ({
+          ...prev,
+          address: address,
+          location: {
+            type: 'Point',
+            coordinates: [longitude, latitude]
+          },
+          // Get address components with proper type safety
+          city: (results[0] as ExtendedLocation)?.city || (results[0] as ExtendedLocation)?.region || prev.city,
+          country: (results[0] as ExtendedLocation)?.country || prev.country,
+          state: (results[0] as ExtendedLocation)?.region || (results[0] as ExtendedLocation)?.administrativeArea || prev.state,
+        }));
+      }
+    } catch (error) {
+      console.log('Error searching address:', error);
+    }
+  }, 1000), []); // 1 second debounce
+
+  // Function to request location permission and get current position
+  const requestLocation = useCallback(async () => {
+    try {
+      setLocationState({ status: 'loading' });
+      
+      // Check if location services are enabled
+      const isEnabled = await Location.hasServicesEnabledAsync();
+      if (!isEnabled) {
+        setLocationState({ 
+          status: 'error',
+          error: 'Location services are disabled. Please enable them in your device settings.'
+        });
+        return;
+      }
+
+      // Request foreground location permission
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        setLocationState({ 
+          status: 'denied',
+          error: 'Permission to access location was denied. Please enable it in your device settings.'
+        });
+        return;
+      }
+
+      // Get current position with higher accuracy
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+        timeInterval: 5000, // 5 seconds
+      });
+
+      const { latitude, longitude } = currentLocation.coords;
+      const newLocation = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+
+      setLocation(newLocation);
+      setLocationState({ status: 'granted' });
+
+      // Update form data with current location
+      setFormData(prev => ({
+        ...prev,
+        location: {
+          type: 'Point',
+          coordinates: [longitude, latitude]
+        }
+      }));
+
+      // Reverse geocode to get address
+      try {
+        const address = await Location.reverseGeocodeAsync({
+          latitude,
+          longitude,
+        });
+
+        if (address.length > 0) {
+          const first = address[0];
+          setFormData(prev => ({
+            ...prev,
+            address: `${first.streetNumber ? first.streetNumber + ' ' : ''}${first.street || ''}`.trim(),
+            city: first.city || '',
+            state: first.region || '',
+            country: first.country || 'Pakistan',
+          }));
+        }
+      } catch (geocodeError) {
+        console.warn('Error reverse geocoding:', geocodeError);
+      }
+
+    } catch (error) {
+      console.error('Error getting location:', error);
+      setLocationState({ 
+        status: 'error',
+        error: 'Unable to get your current location. Please try again or enter your address manually.'
+      });
+    }
+  }, []);
+
+  // Call this effect when the component mounts
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      requestLocation();
+    }
+  }, [requestLocation]);
+
+  const handleMapPress = async (e: any) => {
+    const { coordinate } = e.nativeEvent;
+    setLocation(prev => ({
+      ...prev,
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+    }));
+    
+    // Update form data with new location
+    setFormData(prev => ({
+      ...prev,
+      location: {
+        type: 'Point',
+        coordinates: [coordinate.longitude, coordinate.latitude]
+      }
+    }));
+
+    // Reverse geocode to get address
+    try {
+      const address = await Location.reverseGeocodeAsync({
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+      });
+
+      if (address.length > 0) {
+        const first = address[0];
+        setFormData(prev => ({
+          ...prev,
+          address: formData.address || `${first.streetNumber ? first.streetNumber + ' ' : ''}${first.street || ''}`.trim(),
+          city: formData.city || first.city || '',
+          state: formData.state || first.region || '',
+          country: formData.country || first.country || 'Pakistan',
+        }));
+      }
+    } catch (error) {
+      console.log('Reverse geocoding not available, using manual address input', error);
+      // If reverse geocoding fails, we'll just keep the existing address values
+      // and let the user input them manually
+    }
+  };
 
   const [formData, setFormData] = useState<Omit<PropertyItem, '_id' | 'createdAt' | 'updatedAt'>>({
     title: '',
@@ -452,12 +708,66 @@ export default function AddPropertyModal({ visible, onClose, onAddProperty }: Ad
                   style={AddPropertystyles.textInput}
                   placeholder="Address *"
                   value={formData.address}
-                  onChangeText={(text) => setFormData({ ...formData, address: text })}
+                  onChangeText={(text) => {
+                    setFormData(prev => ({ ...prev, address: text }));
+                    searchAddress(text);
+                  }}
                 />
               </View>
 
+              <View style={[styles.mapContainer, AddPropertystyles.fieldSpacing]}>
+                {locationState.status === 'loading' && (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text style={styles.loadingText}>Getting your location...</Text>
+                  </View>
+                )}
+
+                {locationState.status === 'denied' || locationState.status === 'error' ? (
+                  <View style={styles.errorContainer}>
+                   <Ionicons name="alert-circle-outline" size={48} color="#ff3b30" />
+
+                    <Text style={styles.errorText}>{locationState.error}</Text>
+                    <Button 
+                      title="Try Again" 
+                      onPress={requestLocation} 
+                      color="#007AFF"
+                    />
+                  </View>
+                ) : (
+                  <MapView
+                    style={styles.map}
+                    region={location}
+                    onRegionChangeComplete={handleMapPress}
+                    provider="google"
+                    showsUserLocation={true}
+                    showsMyLocationButton={true}
+                    showsCompass={true}
+                    showsPointsOfInterest={true}
+                    showsBuildings={true}
+                    toolbarEnabled={true}
+                    moveOnMarkerPress={true}
+                    loadingEnabled={true}
+                    loadingIndicatorColor="#666666"
+                    loadingBackgroundColor="#f8f9fa"
+                  >
+                    <Marker
+                      coordinate={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                      }}
+                      title="Property Location"
+                      description="Drag to adjust the location"
+                      draggable
+                      onDragEnd={handleMapPress}
+                    />
+                  </MapView>
+                )}
+                <Text style={styles.mapHint}>Tap on the map to set property location or search for an address above</Text>
+              </View>
+
               <View style={[AddPropertystyles.formRow, AddPropertystyles.fieldSpacing]}>
-                <View style={[ AddPropertystyles.inputContainer, { flex: 1, marginRight: 8 }]}>
+                <View style={[AddPropertystyles.inputContainer, { flex: 1, marginRight: 8 }]}>
                   <TextInput
                     style={ AddPropertystyles.textInput}
                     placeholder="City"
